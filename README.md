@@ -63,6 +63,5 @@ Applies average blur to the image.
 Applies an old TV effect to the image.
 
 ## Fast Automated Test showcase
-https://github.com/HossamSaberX/ImageProcessigncpp/assets/87739278/d35127af-d7ed-47b2-a4e6-6b19650edaeb
-
+https://github.com/HossamSaberX/ImageProcessingcpp/assets/87739278/464b23e6-6160-4b78-9bb0-3b6abdc8cea5
 For more details on how each filter algorithm works, refer to the source code in `imageprocessing.cpp` and `imageprocessing.h`.
