@@ -359,20 +359,36 @@ bool ImageProcessor::Filter12() {
         int height = image->getHeight();
         int channels = image->getChannels();
         std::vector<std::vector<std::vector<unsigned char>>> blurredMatrix(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(channels)));
+        double sigma = 2.0;
+        int filter[9][9];
+        int filterSum = 0;
+        for (int i = -4; i <= 4; ++i) {
+            for (int j = -4; j <= 4; ++j) {
+                filter[i + 4][j + 4] = static_cast<int>(100.0 * exp(-static_cast<double>(i * i + j * j) / (2.0 * sigma * sigma)));
+                filterSum += filter[i + 4][j + 4];
+            }
+        }
 
-        for (int i = 1; i < height - 1; ++i) {
-            for (int j = 1; j < width - 1; ++j) {
+        for (int i = 4; i < height - 4; ++i) {
+            for (int j = 4; j < width - 4; ++j) {
                 for (int k = 0; k < channels; ++k) {
-                    int sum = 4 * matrix[i][j][k] + 2 * (matrix[i - 1][j][k] + matrix[i][j - 1][k] + matrix[i][j + 1][k] + matrix[i + 1][j][k]) + (matrix[i - 1][j - 1][k] + matrix[i - 1][j + 1][k] + matrix[i + 1][j - 1][k] + matrix[i + 1][j + 1][k]);
-                    blurredMatrix[i][j][k] = static_cast<unsigned char>(sum / 16);
+                    int sum = 0;
+                    for (int di = -4; di <= 4; ++di) {
+                        for (int dj = -4; dj <= 4; ++dj) {
+                            sum += filter[di + 4][dj + 4] * matrix[i + di][j + dj][k];
+                        }
+                    }
+                    blurredMatrix[i][j][k] = static_cast<unsigned char>(sum / filterSum);
                 }
             }
         }
+
         updateImage(blurredMatrix);
         return true;
     }
     return false;
 }
+
 // Average Blur filter
 bool ImageProcessor::Filter13() {
     if (image) {
@@ -382,19 +398,38 @@ bool ImageProcessor::Filter13() {
         int channels = image->getChannels();
         std::vector<std::vector<std::vector<unsigned char>>> blurredMatrix(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(channels)));
 
-        for (int i = 1; i < height - 1; ++i) {
-            for (int j = 1; j < width - 1; ++j) {
+        int r = 10;
+        int kernelSize = 2 * r + 1;
+        int area = kernelSize * kernelSize;
+        std::vector<std::vector<std::vector<int>>> sat(height, std::vector<std::vector<int>>(width, std::vector<int>(channels, 0)));
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
                 for (int k = 0; k < channels; ++k) {
-                    int sum = matrix[i - 1][j - 1][k] + matrix[i - 1][j][k] + matrix[i - 1][j + 1][k] + matrix[i][j - 1][k] + matrix[i][j][k] + matrix[i][j + 1][k] + matrix[i + 1][j - 1][k] + matrix[i + 1][j][k] + matrix[i + 1][j + 1][k];
-                    blurredMatrix[i][j][k] = static_cast<unsigned char>(sum / 9);
+                    sat[i][j][k] = matrix[i][j][k];
+                    if (i > 0) sat[i][j][k] += sat[i - 1][j][k];
+                    if (j > 0) sat[i][j][k] += sat[i][j - 1][k];
+                    if (i > 0 && j > 0) sat[i][j][k] -= sat[i - 1][j - 1][k];
                 }
             }
         }
+        for (int i = r; i < height - r; ++i) {
+            for (int j = r; j < width - r; ++j) {
+                for (int k = 0; k < channels; ++k) {
+                    int sum = sat[i + r][j + r][k];
+                    if (i - r - 1 >= 0) sum -= sat[i - r - 1][j + r][k];
+                    if (j - r - 1 >= 0) sum -= sat[i + r][j - r - 1][k];
+                    if (i - r - 1 >= 0 && j - r - 1 >= 0) sum += sat[i - r - 1][j - r - 1][k];
+                    blurredMatrix[i][j][k] = static_cast<unsigned char>(sum / area);
+                }
+            }
+        }
+
         updateImage(blurredMatrix);
         return true;
     }
     return false;
 }
+
 // Old TV filter
 bool ImageProcessor::Filter14() {
     if (image) {
@@ -403,25 +438,17 @@ bool ImageProcessor::Filter14() {
         int height = image->getHeight();
         int channels = image->getChannels();
         std::vector<std::vector<std::vector<unsigned char>>> oldTVMatrix(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(channels)));
-        for (int i = 1; i < height - 1; ++i) {
-            for (int j = 1; j < width - 1; ++j) {
-                for (int k = 0; k < channels; ++k) {
-                    int sum = matrix[i - 1][j - 1][k] + matrix[i - 1][j][k] + matrix[i - 1][j + 1][k] + matrix[i][j - 1][k] + matrix[i][j][k] + matrix[i][j + 1][k] + matrix[i + 1][j - 1][k] + matrix[i + 1][j][k] + matrix[i + 1][j + 1][k];
-                    oldTVMatrix[i][j][k] = static_cast<unsigned char>(sum / 9);
-                }
-            }
-        }
+        Filter13();
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
                 for (int k = 0; k < channels; ++k) {
-                    int noise = rand() % 40 - 20;
-                    int pixel = oldTVMatrix[i][j][k] + noise;
+                    int noise = rand() % 100 - 50;
+                    int pixel = matrix[i][j][k] + noise;
                     pixel = std::max(0, std::min(pixel, 255));
                     oldTVMatrix[i][j][k] = static_cast<unsigned char>(pixel);
                 }
             }
         }
-
         updateImage(oldTVMatrix);
         return true;
     }
