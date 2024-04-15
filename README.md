@@ -16,7 +16,7 @@ To use this image processing tool, follow these steps:
 2. **Build the Project**: Build the project using your preferred C++ compiler.
 
 3. **Choose an Image**: Provide the path to the input image in the main.cpp or tweak it using the simple gui in the while(true) loop.
-4. **Choose a filter of your choice**: You can more than one filter on the same image before being saved but i added the autoSave functionality to see the result after each step.
+4. **Choose a filter of your choice**: You can apply more than one filter on the same image before being saved but i added the autoSave functionality to see the result after each step.
 
 ## Available Filters
 
