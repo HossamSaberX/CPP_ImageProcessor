@@ -1,0 +1,15 @@
+# ninja log v5
+1888	2138	7348362865437360	assign.exe	ca5b121f66bed990
+4	1887	7348362862967302	CMakeFiles/assign.dir/main.cpp.obj	cc6e5e15407bbef5
+9	1252	7348355419117775	CMakeFiles/assign.dir/ImageProcessor.cpp.obj	160d014fe08de13e
+3	518	7348215842056437	CMakeFiles/assign.dir/image.cpp.obj	af8a717f288199b4
+1	408	7348393765921049	CMakeFiles/assign.dir/image.cpp.obj	af8a717f288199b4
+6	1188	7348393773681161	CMakeFiles/assign.dir/ImageProcessor.cpp.obj	160d014fe08de13e
+11	1883	7348393780613662	CMakeFiles/assign.dir/main.cpp.obj	cc6e5e15407bbef5
+1883	2111	7348393782890224	assign.exe	ca5b121f66bed990
+4	1900	7348394597499116	CMakeFiles/assign.dir/main.cpp.obj	cc6e5e15407bbef5
+1900	2124	7348394599697502	assign.exe	ca5b121f66bed990
+5	2238	7348398295312134	CMakeFiles/assign.dir/main.cpp.obj	cc6e5e15407bbef5
+2238	2481	7348398297728401	assign.exe	ca5b121f66bed990
+4	2028	7348398888685424	CMakeFiles/assign.dir/main.cpp.obj	cc6e5e15407bbef5
+2028	2270	7348398891085363	assign.exe	ca5b121f66bed990
