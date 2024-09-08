@@ -105,7 +105,6 @@ The line `data[(i * width + j) * channels + k] = matrix[i][j][k];`corresponds to
 `i * width + j`: This calculation determines the position of the pixel in the 2D image grid. Multiplying the row index (i) by the width of the image (width) and adding the column index (j) yields the linear index of the pixel within the image.
 
 `*channels + k`: The linear index obtained from the previous calculation is then multiplied by the number of channels per pixel and added to the channel index (k). This accounts for the fact that each pixel consists of multiple channels (e.g., RGB), and ensures that the correct channel of the pixel is accessed in the linear array.
-For more details on how each filter algorithm works, refer to the source code in `imageprocessing.cpp` and `imageprocessing.h`.
 
 
 For more details on how each filter algorithm works, refer to the source code in `imageprocessing.cpp` and `imageprocessing.h`.
